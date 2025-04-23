@@ -1,0 +1,12 @@
+*/supervisely.env
+.vscode/
+.idea/
+node_modules/
+.DS_Store
+*.log
+*.pyc
+.venv/
+
+debug/
+supervisely/
+supervisely

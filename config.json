@@ -1,0 +1,17 @@
+{
+  "name": "Data Organizations Tool for Solutions",
+  "description": "This application is used to preview, sample, copy, and move data between projects for Solutions workflows.",
+  "version": "2.0.0",
+  "type": "app",
+  "categories": ["images"],
+  "docker_image": "supervisely/base-py-sdk:6.73.337",
+  "instance_version": "6.12.33",
+  "task_location": "workspace_tasks",
+  "disable_stop": true,
+  "context_menu": {
+    "target": ["images_project"]
+  },
+  "headless": false,
+  "entrypoint": "python -m uvicorn src.main:app --host 0.0.0.0 --port 8000",
+  "port": 8000
+}
