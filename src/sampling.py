@@ -2,7 +2,7 @@ import supervisely as sly
 from fastapi.requests import Request
 from fastapi.routing import APIRouter
 
-import sly_functions as f
+import src.sly_functions as f
 import src.sly_globals as g
 
 sampling_router = APIRouter()
