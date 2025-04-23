@@ -5,7 +5,7 @@ import supervisely as sly
 # from fastapi import FastAPI
 
 import src.sly_globals as g
-from sampling import sampling_router
+from src.sampling import sampling_router
 
 # Sly application
 app = sly.Application()
