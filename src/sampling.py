@@ -12,7 +12,7 @@ sampling_router = APIRouter()
 async def random_sample(request: Request):
     req = await request.json()
     try:
-        state = req["state"]
+        state = request.state.state
         src_project_id = state["src_project_id"]
         dst_project_id = state["dst_project_id"]
         sample_size = state["sample_size"]
