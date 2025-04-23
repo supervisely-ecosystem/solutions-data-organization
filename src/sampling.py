@@ -8,7 +8,7 @@ import src.sly_globals as g
 sampling_router = APIRouter()
 
 
-@sampling_router.get("/random_sample")
+@sampling_router.post("/random_sample")
 async def random_sample(request: Request):
     req = await request.json()
     try:
