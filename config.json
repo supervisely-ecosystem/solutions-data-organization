@@ -8,9 +8,6 @@
   "instance_version": "6.12.33",
   "task_location": "workspace_tasks",
   "disable_stop": true,
-  "context_menu": {
-    "target": ["images_project"]
-  },
   "headless": false,
   "entrypoint": "python -m uvicorn src.main:app --host 0.0.0.0 --port 8000",
   "port": 8000
