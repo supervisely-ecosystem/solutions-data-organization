@@ -187,7 +187,7 @@ def copy_or_move_images(
             dst_ds_id = src_to_dst_map.get(src_ds_id)
             if dst_ds_id is None and src_ds_id in ds_to_create:
                 # Create new dataset in destination project
-                src_parent_ids = [src_ds.id for src_ds in src_datasets if src_ds.id == src_ds_id]
+                src_parent_ids = src_child_to_parents[src_ds_id]
                 dst_parent_id = None
                 for parent_id in src_parent_ids:
                     src_ds = api.dataset.get_info_by_id(parent_id)
