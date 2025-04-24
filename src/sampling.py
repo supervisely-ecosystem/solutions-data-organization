@@ -10,12 +10,12 @@ sampling_router = APIRouter()
 
 @sampling_router.post("/random_sample")
 async def random_sample(request: Request):
-    req = await request.json()
     try:
         state = request.state.state
         src_project_id = state["src_project_id"]
         dst_project_id = state["dst_project_id"]
         sample_size = state["sample_size"]
+        sly.logger.info(f"Random sample: {src_project_id} -> {dst_project_id}, size: {sample_size}")
         return {"data": run_random_sample(src_project_id, dst_project_id, sample_size)}
     except Exception as e:
         sly.logger.error(f"Error during random sample: {e}")
@@ -63,9 +63,9 @@ def run_random_sample(src_project_id, dst_project_id, sample_size: int):
 
 if __name__ == "__main__":
     # Example usage
-    src_project_id = 1312
-    dst_project_id = 1764
-    sample_size = 4
+    src_project_id = 1769
+    dst_project_id = 1773
+    sample_size = 1
 
     result = run_random_sample(src_project_id, dst_project_id, sample_size)
     print(result)
