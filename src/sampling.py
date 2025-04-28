@@ -16,7 +16,24 @@ async def random_sample(request: Request):
         dst_project_id = state["dst_project_id"]
         sample_size = state["sample_size"]
         sly.logger.info(f"Random sample: {src_project_id} -> {dst_project_id}, size: {sample_size}")
-        return {"data": run_random_sample(src_project_id, dst_project_id, sample_size)}
+        data = run_random_sample(src_project_id, dst_project_id, sample_size)
+
+        if data["src"] is None or data["dst"] is None:
+            status = "failed"
+            total_items = 0
+        else:
+            status = "completed"
+            total_items = len(data["src"])
+
+        f.add_record_to_history(
+            api=g.api,
+            project_id=g.project_id,
+            key="sampling_history",
+            status=status,
+            total_items=total_items,
+        )
+
+        return {"data": data}
     except Exception as e:
         sly.logger.error(f"Error during random sample: {e}")
         return {"error": str(e)}
