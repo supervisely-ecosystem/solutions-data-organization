@@ -1,6 +1,7 @@
 import random
 from collections import defaultdict
-from typing import Dict, List, Tuple
+from datetime import datetime
+from typing import Dict, List, Literal, Tuple, Optional
 
 import supervisely as sly
 
@@ -218,3 +219,50 @@ def copy_or_move_images(
             added[dst_ds_id] = [i.id for i in new_imgs]
             sly.logger.info(f"Copied {len(new_imgs)} images to dataset {dst_ds_id}")
     return src, added
+
+
+def add_record_to_history(
+    api: sly.Api,
+    project_id: int,
+    key: Literal["sampling_history", "move_history"],
+    status: Literal["completed", "failed"],
+    total_items: int = None,
+    items: List[int] = None,
+    mode: Optional[Literal["random sample"]] = None,
+) -> None:
+    """
+    Adds a record to the Project's sample or move history.
+    Args:
+        api (sly.Api): API instance.
+        project_id (int): Project ID.
+        task_id (int): Task ID.
+        key (str): Key to identify the history type ("sampling_history" or "move_history").
+    """
+    task_info = api.task.get_info_by_id(sly.env.task_id())
+    app = task_info.get("meta", {}).get("app")
+    app_version = app.get("version") if app else None
+    app_name = app.get("name") if app else sly.env.app_name(raise_not_found=False)
+
+    data = {
+        "task_id": sly.env.task_id(),
+        "app": {"name": app_name, "version": app_version},
+        "status": status,
+        "team_id": sly.env.team_id(),
+        "timestamp": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "items_count": total_items,
+        "items": items,
+        "key": key,
+    }
+    if mode is not None:
+        data["mode"] = mode
+
+    project_info = api.project.get_info_by_id(project_id)
+
+    custom_data = project_info.custom_data or {}
+    if key not in custom_data:
+        custom_data[key] = {"tasks": []}
+    if "tasks" not in custom_data[key]:
+        custom_data[key]["tasks"] = []
+    custom_data[key]["tasks"].append(data)
+
+    api.project.edit_info(project_id, custom_data=custom_data)
