@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List, Literal, Tuple, Optional
+from typing import Dict, List, Literal, Optional, Tuple
 
 import supervisely as sly
 
@@ -266,3 +266,44 @@ def add_record_to_history(
     custom_data[key]["tasks"].append(data)
 
     api.project.edit_info(project_id, custom_data=custom_data)
+
+
+def merge_update_metas(api: sly.Api, src_project_id: int, dst_project_id: int):
+    meta_1 = api.project.get_meta(src_project_id, with_settings=True)
+    meta_2 = api.project.get_meta(dst_project_id, with_settings=True)
+
+    meta_1 = sly.ProjectMeta.from_json(meta_1)
+    meta_2 = sly.ProjectMeta.from_json(meta_2)
+
+    if meta_1 != meta_2:
+        meta_2 = meta_1.merge(meta_2)
+        api.project.update_meta(dst_project_id, meta_2)
+
+
+def get_splits_details(api: sly.Api, project_id: int):
+    all_collections = api.entities_collection.get_list(project_id)
+    train_collections = []
+    val_collections = []
+    for collection in all_collections:
+        collection
+        if collection.name.startswith("train_"):
+            train_collections.append(collection)
+        elif collection.name.startswith("val_"):
+            val_collections.append(collection)
+
+    if len(train_collections) != len(val_collections):
+        sly.logger.warning(
+            f"Number of train collections ({len(train_collections)}) "
+            f"does not match number of val collections ({len(val_collections)})"
+        )
+
+    train_count = 0
+    val_count = 0
+    for collection in train_collections:
+        train_count += len(api.entities_collection.get_items(collection.id, project_id))
+
+    for collection in val_collections:
+        val_count += len(api.entities_collection.get_items(collection.id, project_id))
+
+    print(f"train_count: {train_count}, val_count: {val_count}")
+    return train_count, val_count, len(train_collections)

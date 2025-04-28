@@ -6,6 +6,7 @@ import supervisely as sly
 
 import src.sly_globals as g
 from src.sampling import sampling_router
+from src.move_images import move_images_router
 
 # Sly application
 app = sly.Application()
@@ -15,6 +16,7 @@ server = app.get_server()
 
 # Register the router
 server.include_router(sampling_router)
+server.include_router(move_images_router)
 
 
 # or
